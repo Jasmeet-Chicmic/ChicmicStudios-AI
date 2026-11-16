@@ -44,8 +44,8 @@ A folder with `.claude-plugin/plugin.json` (name, version, description) and a `s
 A git repo with `.claude-plugin/marketplace.json` listing the plugins. This repo is the marketplace. People add it once:
 
 ```text
-/plugin marketplace add your-org/chicmic-ai
-/plugin install chicmic-frontend@chicmic-ai
+/plugin marketplace add Jasmeet-Chicmic/ChicmicStudios-AI
+/plugin install chicmic-frontend@chicmicstudios-ai
 ```
 
 Or a project enables it for everyone by committing `.claude/settings.json`:
@@ -53,9 +53,11 @@ Or a project enables it for everyone by committing `.claude/settings.json`:
 ```json
 {
   "extraKnownMarketplaces": {
-    "chicmic-ai": { "source": { "source": "github", "repo": "your-org/chicmic-ai" } }
+    "chicmicstudios-ai": {
+      "source": { "source": "github", "repo": "Jasmeet-Chicmic/ChicmicStudios-AI" }
+    }
   },
-  "enabledPlugins": { "chicmic-frontend@chicmic-ai": true }
+  "enabledPlugins": { "chicmic-frontend@chicmicstudios-ai": true }
 }
 ```
 
@@ -64,14 +66,14 @@ When a teammate opens the project and trusts the folder, Claude Code offers to i
 ## How it fits together
 
 ```text
-chicmic-ai (marketplace repo)
+chicmicstudios-ai (marketplace repo)
  ├── chicmic-core      → code-review, pr-description, ...
  └── chicmic-frontend  → react-component, react-performance, nextjs-app-router, ...
 
 each project repo
  ├── AGENTS.md              → project-specific facts
  ├── CLAUDE.md              → "@AGENTS.md"
- └── .claude/settings.json  → enables chicmic-ai plugins
+ └── .claude/settings.json  → enables chicmicstudios-ai plugins
 ```
 
 Rule of thumb: **facts about one project → AGENTS.md. A repeatable way of doing a task → skill.**

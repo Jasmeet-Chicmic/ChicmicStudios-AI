@@ -1,4 +1,4 @@
-// Shared helpers for chicmic-ai scripts.
+// Shared helpers for chicmicstudios-ai scripts.
 import fs from 'node:fs';
 import path from 'node:path';
 import YAML from 'yaml';

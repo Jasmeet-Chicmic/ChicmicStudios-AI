@@ -2,7 +2,7 @@
 
 ## Week 1 — pilot
 
-- [ ] Push `chicmic-ai` to the company git host; set `config.marketplaceRepo`; CI green.
+- [ ] Push `chicmicstudios-ai` to the company git host; set `config.marketplaceRepo`; CI green.
 - [ ] Pick **two** active projects: one React (Vite) and one Next.js.
 - [ ] `npm run init-project` on each, fill AGENTS.md with the `agents-md-writer` skill, tech lead reviews, commit.
 - [ ] 2–3 developers use it daily for a week and note every time the agent got something wrong.
@@ -22,11 +22,11 @@
 
 ## Ownership
 
-| Item                       | Owner                    |
-| -------------------------- | ------------------------ |
-| `chicmic-ai` repo, CI      | AI-standards maintainer  |
-| `chicmic-frontend` skills  | Frontend lead            |
-| Each project's `AGENTS.md` | That project's tech lead |
+| Item                         | Owner                    |
+| ---------------------------- | ------------------------ |
+| `chicmicstudios-ai` repo, CI | AI-standards maintainer  |
+| `chicmic-frontend` skills    | Frontend lead            |
+| Each project's `AGENTS.md`   | That project's tech lead |
 
 ## Security notes
 

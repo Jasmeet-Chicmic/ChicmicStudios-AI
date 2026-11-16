@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-export function tmpDir(prefix = 'chicmic-ai-') {
+export function tmpDir(prefix = 'chicmicstudios-ai-') {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
 }
 
@@ -14,7 +14,7 @@ export function write(root, rel, content) {
 }
 
 /** A temp folder that looks like a TypeScript project. */
-export function tsProject(prefix = 'chicmic-ai-') {
+export function tsProject(prefix = 'chicmicstudios-ai-') {
   const dir = tmpDir(prefix);
   write(dir, 'tsconfig.json', { compilerOptions: { strict: true } });
   return dir;

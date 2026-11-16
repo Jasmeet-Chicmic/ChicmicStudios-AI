@@ -18,7 +18,7 @@ npm create vite@latest my-app -- --template react-ts     # React + Vite
 npx create-next-app@latest my-app --typescript            # Next.js
 ```
 
-Make sure `tsconfig.json` has `"strict": true`, then run `init-project --new` from the chicmic-ai repo (it refuses a project without `tsconfig.json`).
+Make sure `tsconfig.json` has `"strict": true`, then run `init-project --new` from the chicmicstudios-ai repo (it refuses a project without `tsconfig.json`).
 
 ## Existing JavaScript projects
 

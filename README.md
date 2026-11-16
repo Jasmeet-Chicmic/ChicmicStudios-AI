@@ -1,4 +1,4 @@
-# chicmic-ai
+# chicmicstudios-ai
 
 Shared AI-agent setup for Chicmic Studios **React and Next.js** projects: a **Claude Code plugin marketplace** with team skills, plus **AGENTS.md templates** that work with Claude Code, Codex, Cursor and Copilot.
 
@@ -10,7 +10,7 @@ Shared AI-agent setup for Chicmic Studios **React and Next.js** projects: a **Cl
 | `chicmic-frontend` | `react-component`, `react-performance`, `nextjs-app-router`, `state-management`, `api-integration`, `forms-validation`, `error-handling`, `styling-design-system`, `accessibility`, `frontend-security`, `react-testing`, `e2e-testing`, `frontend-tooling-setup` | React / Vite / Next.js |
 
 ```text
-chicmic-ai/
+chicmicstudios-ai/
 ├── .claude-plugin/marketplace.json   # list of plugins (the "marketplace")
 ├── plugins/<plugin>/
 │   ├── .claude-plugin/plugin.json    # plugin manifest (name, version)
@@ -29,10 +29,10 @@ New to plugins and skills? Read [docs/concepts.md](docs/concepts.md) first.
 2. Set the repo location in `package.json`:
 
    ```json
-   "config": { "marketplaceRepo": "your-org/chicmic-ai" }
+   "config": { "marketplaceRepo": "Jasmeet-Chicmic/ChicmicStudios-AI" }
    ```
 
-   For GitLab or self-hosted git use the clone URL, e.g. `https://gitlab.com/chicmic/chicmic-ai.git`.
+   For GitLab or self-hosted git use the clone URL, e.g. `https://gitlab.com/chicmic/chicmicstudios-ai.git`.
 
 3. `npm install` (also installs the pre-commit hook), then `npm run check`.
 
@@ -68,8 +68,8 @@ Then in the project:
 Manual install (any project, or just for yourself):
 
 ```text
-/plugin marketplace add your-org/chicmic-ai
-/plugin install chicmic-frontend@chicmic-ai
+/plugin marketplace add Jasmeet-Chicmic/ChicmicStudios-AI
+/plugin install chicmic-frontend@chicmicstudios-ai
 ```
 
 ## Working on this repo
@@ -85,10 +85,10 @@ npm run new-skill -- frontend form-validation "Use when building forms with vali
 Test a skill locally before pushing:
 
 ```text
-/plugin marketplace add /absolute/path/to/chicmic-ai
-/plugin install chicmic-frontend@chicmic-ai
+/plugin marketplace add /absolute/path/to/chicmicstudios-ai
+/plugin install chicmic-frontend@chicmicstudios-ai
 ```
 
-After changing files, run `/plugin marketplace update chicmic-ai` in Claude Code to pick them up.
+After changing files, run `/plugin marketplace update chicmicstudios-ai` in Claude Code to pick them up.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for how to write a good skill and [docs/rollout.md](docs/rollout.md) for the team rollout plan.

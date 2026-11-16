@@ -14,7 +14,7 @@ import {
 import { jsProject, tmpDir, tsProject, write } from './helpers.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const REPO = 'acme/chicmic-ai';
+const REPO = 'acme/chicmicstudios-ai';
 const read = (dir, f) => fs.readFileSync(path.join(dir, f), 'utf8');
 const settings = (dir) => JSON.parse(read(dir, '.claude/settings.json'));
 
@@ -29,10 +29,10 @@ describe('initProject', () => {
     assert.doesNotMatch(read(target, 'AGENTS.md'), /\{\{PROJECT_NAME\}\}/);
     assert.equal(read(target, 'CLAUDE.md'), '@AGENTS.md\n');
     assert.deepEqual(settings(target), {
-      extraKnownMarketplaces: { 'chicmic-ai': { source: { source: 'github', repo: REPO } } },
+      extraKnownMarketplaces: { 'chicmicstudios-ai': { source: { source: 'github', repo: REPO } } },
       enabledPlugins: {
-        'chicmic-core@chicmic-ai': true,
-        'chicmic-frontend@chicmic-ai': true,
+        'chicmic-core@chicmicstudios-ai': true,
+        'chicmic-frontend@chicmicstudios-ai': true,
       },
     });
   });
@@ -43,8 +43,8 @@ describe('initProject', () => {
     assert.match(read(target, 'AGENTS.md'), /^# Admin Panel/);
     assert.match(read(target, 'AGENTS.md'), /App Router/);
     assert.deepEqual(Object.keys(settings(target).enabledPlugins), [
-      'chicmic-core@chicmic-ai',
-      'chicmic-frontend@chicmic-ai',
+      'chicmic-core@chicmicstudios-ai',
+      'chicmic-frontend@chicmicstudios-ai',
     ]);
   });
 
@@ -104,13 +104,15 @@ describe('initProject', () => {
     const s = settings(target);
     assert.deepEqual(s.permissions, { allow: ['Bash(npm test)'] });
     assert.equal(s.enabledPlugins['other@elsewhere'], true);
-    assert.equal(s.enabledPlugins['chicmic-frontend@chicmic-ai'], true);
+    assert.equal(s.enabledPlugins['chicmic-frontend@chicmicstudios-ai'], true);
   });
 
   it('accepts a custom plugin list', () => {
     const target = tsProject();
     initProject({ target, type: 'react', repo: REPO, plugins: 'core' });
-    assert.deepEqual(Object.keys(settings(target).enabledPlugins), ['chicmic-core@chicmic-ai']);
+    assert.deepEqual(Object.keys(settings(target).enabledPlugins), [
+      'chicmic-core@chicmicstudios-ai',
+    ]);
   });
 
   it('rejects unknown plugins, types and missing targets', () => {
@@ -135,7 +137,7 @@ describe('initProject', () => {
       recursive: true,
     });
     fs.cpSync(path.join(ROOT, 'templates'), path.join(fakeRoot, 'templates'), { recursive: true });
-    write(fakeRoot, 'package.json', { config: { marketplaceRepo: 'YOUR-ORG/chicmic-ai' } });
+    write(fakeRoot, 'package.json', { config: { marketplaceRepo: 'YOUR-ORG/chicmicstudios-ai' } });
     assert.throws(
       () => initProject({ target: tmpDir(), type: 'react', root: fakeRoot }),
       /Set the marketplace repo/,
