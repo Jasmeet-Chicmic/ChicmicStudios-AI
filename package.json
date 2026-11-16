@@ -1,0 +1,38 @@
+{
+  "name": "chicmic-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chicmic Studios AI-agent marketplace: plugins, skills and AGENTS.md templates",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "test": "node --test \"tests/**/*.test.mjs\"",
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run format:check && npm run lint:md && npm run validate && npm test",
+    "init-project": "node scripts/init-project.mjs",
+    "new-skill": "node scripts/new-skill.mjs",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.1",
+    "markdownlint-cli2": "^0.24.1",
+    "prettier": "^3.10.1",
+    "yaml": "^2.9.1"
+  },
+  "lint-staged": {
+    "*.{json,js,mjs,yml,yaml}": "prettier --write",
+    "*.md": [
+      "prettier --write",
+      "markdownlint-cli2"
+    ]
+  },
+  "config": {
+    "marketplaceRepo": "YOUR-ORG/chicmic-ai"
+  }
+}

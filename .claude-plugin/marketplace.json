@@ -1,0 +1,22 @@
+{
+  "name": "chicmic-ai",
+  "owner": {
+    "name": "Chicmic Studios Frontend Team"
+  },
+  "metadata": {
+    "description": "Shared AI-agent skills and AGENTS.md templates for Chicmic React and Next.js projects",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "chicmic-core",
+      "source": "./plugins/chicmic-core",
+      "description": "Skills for every frontend project: code review, PR descriptions, commit messages, writing AGENTS.md"
+    },
+    {
+      "name": "chicmic-frontend",
+      "source": "./plugins/chicmic-frontend",
+      "description": "React and Next.js: components, performance, App Router, state, forms, API, accessibility, testing, tooling"
+    }
+  ]
+}

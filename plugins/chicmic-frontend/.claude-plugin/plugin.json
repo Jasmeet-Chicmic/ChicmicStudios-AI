@@ -1,0 +1,8 @@
+{
+  "name": "chicmic-frontend",
+  "version": "1.0.0",
+  "description": "React / Next.js team skills: components, API integration, testing, tooling",
+  "author": {
+    "name": "Chicmic Studios"
+  }
+}

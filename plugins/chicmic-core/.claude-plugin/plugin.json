@@ -1,0 +1,8 @@
+{
+  "name": "chicmic-core",
+  "version": "1.0.0",
+  "description": "Skills for every Chicmic project: code review, PR descriptions, commit messages, AGENTS.md generation",
+  "author": {
+    "name": "Chicmic Studios"
+  }
+}
