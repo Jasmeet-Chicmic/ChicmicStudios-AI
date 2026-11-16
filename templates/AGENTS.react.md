@@ -12,8 +12,8 @@ TODO: 2–3 lines — what the product is, who it is for, which platforms (web /
 - React 18 + TypeScript, built with Vite <!-- ts -->
 - React 18 + JavaScript (JSX), built with Vite <!-- js -->
 - Routing: React Router
-- State: TODO (Redux Toolkit / Zustand / Context)
-- Data fetching: TODO (React Query / RTK Query / axios hooks)
+- State: Redux Toolkit (`src/store/`, typed `useAppSelector` / `useAppDispatch`) for global client state
+- Data fetching: TanStack React Query for all API data (hooks in `src/hooks/` wrap `src/services/`)
 - Styling: TODO (SCSS modules / Tailwind / MUI)
 - Testing: Vitest + React Testing Library + MSW
 - Lint/format: ESLint (flat config) + Prettier, enforced by Husky + lint-staged
@@ -40,7 +40,7 @@ src/
 ├── hooks/        # reusable hooks (data hooks wrap services)
 ├── components/   # shared UI components (one folder per component)
 ├── pages/        # route-level screens
-├── store/        # global state
+├── store/        # Redux Toolkit: index.ts (makeStore), hooks.ts, slices/
 ├── types/        # shared TypeScript types <!-- ts -->
 ├── types/        # shared JSDoc @typedef definitions <!-- js -->
 ├── utils/        # pure helpers
@@ -53,7 +53,8 @@ src/
 - JavaScript project: source files are `.js`/`.jsx`. Migrating to TypeScript is a separate, planned task, not part of feature work. <!-- js -->
 - Components: function components, named exports, `<Name>Props` interface, folder per component with `index.ts`, test next to the file. <!-- ts -->
 - Components: function components, named exports, props documented with a JSDoc `@typedef`, folder per component with `index.js`, test next to the file. <!-- js -->
-- Components never call the HTTP client directly: component → hook → service → `api/client.ts`.
+- Components never call the HTTP client directly: component → React Query hook → service → `api/client.ts`.
+- API data lives only in React Query; Redux holds client-only state (cart, wizard, UI). Never copy API responses into Redux.
 - Every async UI handles loading, error and empty states.
 - Env variables start with `VITE_` and are listed in `.env.example`.
 - Absolute imports via `@/` alias.

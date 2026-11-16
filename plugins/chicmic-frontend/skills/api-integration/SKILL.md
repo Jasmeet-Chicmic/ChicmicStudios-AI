@@ -1,13 +1,13 @@
 ---
 name: api-integration
-description: Use when integrating a REST API endpoint, adding a service function, data-fetching hook, or handling auth tokens and API errors in a Chicmic React or Next.js project.
+description: Use when integrating a REST API endpoint, fetching or mutating data, adding a service function, a React Query (TanStack Query) useQuery or useMutation hook, or handling auth tokens and API errors in a Chicmic React or Next.js project.
 ---
 
 # API integration
 
-**JavaScript projects:** the examples are TypeScript. In an existing `.js`/`.jsx` project, write the same code without types and document props and data shapes with JSDoc (`@typedef`, `@param`). Do not convert files to TypeScript as a side effect. New projects are always TypeScript.
+**JavaScript.. side effect. New projects are always TypeScript.
 
-Follow the layering below. If the project's `AGENTS.md` names a different HTTP client or data library, use that.
+**Chicmic standard:** all API / server data goes through **TanStack React Query** (`@tanstack/react-query` v5). Client-only global state goes in Redux Toolkit (see `state-management`) — never put API responses in Redux, and do not use RTK Query or SWR. Existing projects that already use another data library keep it (check `AGENTS.md`).
 
 ## Layers
 
@@ -15,7 +15,8 @@ Follow the layering below. If the project's `AGENTS.md` names a different HTTP c
 src/
 ├── api/client.ts          # one configured axios/fetch instance: baseURL, auth header, interceptors
 ├── services/user.service.ts  # plain async functions, one per endpoint, typed request/response
-├── hooks/useUsers.ts      # React Query / SWR / custom hook wrapping the service
+├── hooks/useUsers.ts      # React Query hooks wrapping the service (useQuery / useMutation)
+├── lib/queryClient.ts     # the shared QueryClient and its defaults
 └── types/user.ts          # API types
 ```
 
@@ -27,25 +28,61 @@ Components only use hooks. Hooks only use services. Services only use the client
 2. Add a service function:
 
    ```ts
-   export async function getUsers(params: GetUsersParams): Promise<User[]> {
-     const { data } = await apiClient.get<ApiResponse<User[]>>('/users', { params });
+   export async function getUsers(
+     params: GetUsersParams,
+     { signal }: { signal?: AbortSignal } = {},
+   ): Promise<User[]> {
+     const { data } = await apiClient.get<ApiResponse<User[]>>('/users', { params, signal });
      return data.data;
    }
    ```
 
-3. Wrap it in a hook (React Query example):
+   Pass `signal` through so React Query can cancel stale requests.
+
+3. Wrap it in React Query hooks. Query keys start with the resource name, then the params:
 
    ```ts
+   export const userKeys = {
+     all: ['users'] as const,
+     list: (params: GetUsersParams) => ['users', 'list', params] as const,
+     detail: (id: string) => ['users', 'detail', id] as const,
+   };
+
    export function useUsers(params: GetUsersParams) {
-     return useQuery({ queryKey: ['users', params], queryFn: () => getUsers(params) });
+     return useQuery({
+       queryKey: userKeys.list(params),
+       queryFn: ({ signal }) => getUsers(params, { signal }),
+     });
+   }
+
+   export function useCreateUser() {
+     const queryClient = useQueryClient();
+     return useMutation({
+       mutationFn: createUser,
+       onSuccess: () => queryClient.invalidateQueries({ queryKey: userKeys.all }),
+     });
    }
    ```
 
-   Mutations invalidate the related query keys on success.
+   Components read `data`, `isPending`, `error` and handle loading / error / empty states.
 
-4. Handle errors in one place: the client interceptor maps HTTP errors to a typed `ApiError` and handles 401 (refresh token or logout). UI shows a user-friendly message, never a raw stack trace.
-5. Base URLs and keys come from env (`import.meta.env.VITE_API_URL` / `process.env.NEXT_PUBLIC_API_URL`). Add new variables to `.env.example`.
-6. Test the service with mocked HTTP (MSW preferred) — see the `react-testing` skill.
+4. **QueryClient setup** (once per app, in `src/lib/queryClient.ts`, provided in `main.tsx` or the Next.js `Providers`):
+
+   ```ts
+   export const queryClient = new QueryClient({
+     defaultOptions: {
+       queries: { staleTime: 60_000, retry: (count, err) => !isClientError(err) && count < 3 },
+     },
+   });
+   ```
+
+   Add `@tanstack/react-query-devtools` in development. In Next.js create the client inside a client `Providers` component with `useState(() => new QueryClient(...))`, not as a server-shared module.
+
+5. Handle errors in one place: the client interceptor maps HTTP errors to a typed `ApiError` and handles 401 (refresh token or logout). UI shows a user-friendly message, never a raw stack trace.
+6. Base URLs and keys come from env (`import.meta.env.VITE_API_URL` / `process.env.NEXT_PUBLIC_API_URL`). Add new variables to `.env.example`.
+7. Test the service and hooks with mocked HTTP (MSW) — wrap hook tests in a fresh `QueryClientProvider` with `retry: false` — see the `react-testing` skill.
+
+**Next.js:** Server Components call the service directly (no hook) and pass data down as props; use React Query hooks in client components for interactive data (pagination, search, mutations).
 
 ## Real-time data (WebSockets / SSE / Socket.IO)
 
@@ -57,6 +94,7 @@ Components only use hooks. Hooks only use services. Services only use the client
 
 ## Do not
 
-- Do not call `fetch`/`axios` inside components.
+- Do not call `fetch`/`axios` inside components or `useEffect` — use a React Query hook.
+- Do not copy query data into Redux or `useState`; read it from the hook.
 - Do not store tokens in `localStorage` if the project uses httpOnly cookies — follow AGENTS.md.
 - Do not hard-code URLs, IDs or tokens.

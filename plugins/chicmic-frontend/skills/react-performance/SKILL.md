@@ -33,8 +33,8 @@ Targets: **LCP < 2.5 s, INP < 200 ms, CLS < 0.1**, initial JS < ~200 KB gzipped 
 ### Rendering (INP, jank)
 
 - **State placement**: keep state as low as possible; lifting it to the top re-renders the whole tree.
-- **Context**: split large contexts (value + setter, or by domain); memoize the provider `value`. Frequently-changing global state → Zustand/Redux selectors instead of Context.
-- **Selectors**: select the smallest slice (`useStore((s) => s.cart.count)`), not the whole store.
+- **Context**: split large contexts (value + setter, or by domain); memoize the provider `value`. Frequently-changing global state → Redux Toolkit with small selectors instead of Context.
+- **Selectors**: select the smallest value (`useAppSelector((s) => s.cart.items.length)`), not the whole slice; use `createSelector` for derived arrays/objects.
 - **Lists**: stable `key` (ids, never index for reorderable lists); virtualize long lists (> ~100 rows) with `@tanstack/react-virtual` or `react-window`.
 - **Memoization — only after profiling shows it helps**: `memo` for a component that re-renders often with the same props; `useMemo` for expensive calculations; `useCallback` for handlers passed to memoized children. If the project uses the React Compiler, skip manual memoization.
 - **Typing/search**: debounce inputs; use `useDeferredValue` or `useTransition` for expensive filtering so typing stays responsive.
@@ -47,7 +47,7 @@ Targets: **LCP < 2.5 s, INP < 200 ms, CLS < 0.1**, initial JS < ~200 KB gzipped 
 
 ### Caching
 
-- React Query / SWR: set sensible `staleTime` so the same data isn't refetched on every mount.
+- React Query: set sensible `staleTime` so the same data isn't refetched on every mount.
 - Next.js: set caching explicitly on `fetch` (`{ next: { revalidate: 60 } }`) or route segment config; avoid making whole routes dynamic by accident (`cookies()`/`headers()` in a shared layout).
 
 ## 3. Report

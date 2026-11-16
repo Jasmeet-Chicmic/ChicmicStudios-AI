@@ -17,7 +17,7 @@ description: Use when handling authentication, tokens, sessions, user-generated 
 - Use the project's auth library (NextAuth/Auth.js, Clerk, Auth0) — don't hand-roll session logic.
 - Protect routes on the **server** (middleware, layout or page checks). Hiding a button in the UI is not authorization.
 - Every Server Action and route handler checks the session and the user's permission for that resource.
-- On logout clear the session server-side and the client caches (React Query `queryClient.clear()`).
+- On logout clear the session server-side and the client caches: React Query `queryClient.clear()` and reset the Redux store.
 
 ## XSS
 

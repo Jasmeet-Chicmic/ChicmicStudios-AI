@@ -16,7 +16,7 @@ AGENTS.md is read by the agent at the start of every session, so every line cost
 5. **Learn the conventions from the code**, not from assumptions: open 3–5 representative files (a component, a service/API file, a store, a test) and note naming, state management, styling, API pattern, error handling.
 6. **Verify every command** you list by checking it exists in `package.json` scripts. Run `lint`, `test`, `build` if cheap, and note anything broken.
 7. Write the file, then create `CLAUDE.md` containing only `@AGENTS.md` if it doesn't exist.
-8. Finish with a short list of **questions for the tech lead** — things you could not determine from the code (for example "Is Redux being phased out in favour of Zustand?").
+8. Finish with a short list of **questions for the tech lead** — things you could not determine from the code (for example "This project uses Zustand; should new state go to Redux Toolkit, the team standard?").
 
 ## Required sections
 

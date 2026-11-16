@@ -11,8 +11,8 @@ TODO: 2–3 lines — what the product is, who it is for, SEO / SSR needs.
 
 - Next.js (App Router) + React + TypeScript <!-- ts -->
 - Next.js (App Router) + React + JavaScript (JSX) <!-- js -->
-- State: TODO (Zustand / Redux Toolkit / Context)
-- Data fetching: Server Components + `fetch` for server data; TODO (React Query / SWR) on the client
+- State: Redux Toolkit for global client state (store created per request in a client `StoreProvider`)
+- Data fetching: Server Components call services directly; TanStack React Query in client components
 - Styling: TODO (Tailwind / SCSS modules)
 - Testing: Vitest (or Jest) + React Testing Library + MSW; TODO Playwright for E2E
 - Lint/format: `eslint-config-next` + Prettier, Husky + lint-staged
@@ -37,7 +37,8 @@ app/              # routes: page.jsx, layout.jsx, loading.jsx, error.jsx, route.
 components/       # shared UI (one folder per component)
 lib/              # server utilities, API client, auth helpers
 services/         # typed functions per backend resource
-hooks/            # client hooks
+hooks/            # client hooks (React Query)
+store/            # Redux Toolkit: makeStore, hooks, slices/
 types/ <!-- ts -->
 public/
 ```
