@@ -5,7 +5,7 @@
   "description": "Chicmic Studios AI-agent marketplace: plugins, skills and AGENTS.md templates",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "validate": "node scripts/validate.mjs",
@@ -33,6 +33,6 @@
     ]
   },
   "config": {
-    "marketplaceRepo": "chicmicstudios/chicmic-ai"
+    "marketplaceRepo": "Jasmeet-Chicmic/ChicmicStudios-AI"
   }
 }
