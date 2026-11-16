@@ -9,10 +9,25 @@ Gives every Chicmic frontend project the same quality gates: **format → lint �
 
 Ready-made config files are in `assets/`. Copy them, then adjust only what the project needs.
 
+## New projects: TypeScript only
+
+Every **new** Chicmic frontend project starts from a TypeScript starter. Never scaffold a JavaScript project.
+
+```bash
+npm create vite@latest my-app -- --template react-ts     # React + Vite
+npx create-next-app@latest my-app --typescript            # Next.js
+```
+
+Make sure `tsconfig.json` has `"strict": true`, then run `init-project --new` from the chicmic-ai repo (it refuses a project without `tsconfig.json`).
+
+## Existing JavaScript projects
+
+Existing `.js`/`.jsx` projects are supported as they are. Set up the same tools (the `eslint.config.js` asset lints `.js`/`.jsx` and applies TypeScript rules only to `.ts`/`.tsx`), but skip the `typecheck` script and the CI `typecheck` step, and rename `vitest.config.ts` / `setup.ts` to `.js`. Moving to TypeScript is a separate, planned task, not part of tooling setup.
+
 ## Steps
 
 1. **Inspect first**: read `package.json` and any existing config. Do not overwrite working configs without asking — merge instead.
-2. **Install** (Vite + React example):
+2. **Install** (Vite + React example; keep `typescript-eslint` for JS projects too, the config uses its helper):
 
    ```bash
    npm i -D prettier eslint @eslint/js typescript-eslint eslint-plugin-react-hooks \
@@ -25,7 +40,7 @@ Ready-made config files are in `assets/`. Copy them, then adjust only what the p
 
 3. **Copy configs** from `assets/`:
    - `.prettierrc.json`, `.prettierignore`, `.editorconfig`
-   - `eslint.config.js` (flat config)
+   - `eslint.config.js` (flat config, lints `.js`, `.jsx`, `.ts` and `.tsx`)
    - `vitest.config.ts`, and `setup.ts` → `src/test/setup.ts` (also `npm i -D @vitejs/plugin-react` if missing)
    - `ci.yml` → `.github/workflows/ci.yml` (or adapt to GitLab CI if the repo is on GitLab)
 4. **Add scripts** to `package.json`:
@@ -44,6 +59,8 @@ Ready-made config files are in `assets/`. Copy them, then adjust only what the p
    }
    ```
 
+   `typecheck` is TypeScript only. Vite projects whose root `tsconfig.json` uses project references need `"tsc -b"`, because `tsc --noEmit` there checks no files.
+
 5. **Pre-commit hook**: `npx husky init`, then set `.husky/pre-commit` to `npx lint-staged`, and add to `package.json`:
 
    ```json
@@ -53,5 +70,5 @@ Ready-made config files are in `assets/`. Copy them, then adjust only what the p
    }
    ```
 
-6. **Verify**: run `npm run format`, `npm run lint`, `npm run typecheck`, `npm test`. On an existing project, commit the formatting change as its own commit (`style: apply prettier`) so real changes stay reviewable.
+6. **Verify**: run `npm run format`, `npm run lint`, `npm run typecheck` (TypeScript only), `npm test`. On an existing project, commit the formatting change as its own commit (`style: apply prettier`) so real changes stay reviewable.
 7. Update the project's `AGENTS.md` **Commands** section with the new scripts.

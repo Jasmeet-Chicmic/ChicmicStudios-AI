@@ -14,6 +14,10 @@
 //   --repo     marketplace location: "org/repo" (GitHub) or a git URL (GitLab/Bitbucket)
 //              default: package.json → config.marketplaceRepo
 //   --force    overwrite an existing AGENTS.md
+//   --new      this is a new project: it must be TypeScript (tsconfig.json required)
+//
+// Language: tsconfig.json → TypeScript. An existing project (has package.json) without
+// tsconfig.json → JavaScript. New projects (--new, or no package.json yet) must be TypeScript.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -32,19 +36,55 @@ export function marketplaceSource(repo) {
   throw new Error(`--repo "${repo}" must be "org/repo" or a git URL`);
 }
 
+const TS_STARTERS =
+  'npm create vite@latest <app> -- --template react-ts  |  npx create-next-app@latest <app> --typescript';
+
+/** Returns 'ts' or 'js'. New projects must be TypeScript. */
+export function detectLanguage(targetDir, { isNew = false } = {}) {
+  if (fs.existsSync(path.join(targetDir, 'tsconfig.json'))) return 'ts';
+  const hasPackageJson = fs.existsSync(path.join(targetDir, 'package.json'));
+  if (isNew || !hasPackageJson) {
+    throw new Error(
+      `${targetDir} has no tsconfig.json. New Chicmic projects must use TypeScript — ` +
+        `create it from a TypeScript starter first: ${TS_STARTERS}`,
+    );
+  }
+  return 'js';
+}
+
+/** Keeps lines for `lang`, drops lines marked for the other language, strips the markers. */
+export function renderTemplate(tpl, { projectName, lang }) {
+  const other = lang === 'ts' ? '<!-- js -->' : '<!-- ts -->';
+  return tpl
+    .split('\n')
+    .filter((line) => !line.trimEnd().endsWith(other))
+    .map((line) => line.replace(/ *<!-- (ts|js) -->\s*$/, ''))
+    .join('\n')
+    .replaceAll('{{PROJECT_NAME}}', projectName);
+}
+
 function parseArgs(argv) {
   const out = {};
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (!a.startsWith('--')) continue;
     const key = a.slice(2);
-    if (key === 'force') out.force = true;
+    if (key === 'force' || key === 'new') out[key] = true;
     else out[key] = argv[++i];
   }
   return out;
 }
 
-export function initProject({ target, type, name, plugins, repo, force = false, root = ROOT }) {
+export function initProject({
+  target,
+  type,
+  name,
+  plugins,
+  repo,
+  force = false,
+  new: isNew = false,
+  root = ROOT,
+}) {
   if (!target) throw new Error('--target is required');
   const cfg = TYPES[type];
   if (!cfg) throw new Error(`--type must be one of: ${Object.keys(TYPES).join(', ')}`);
@@ -68,6 +108,8 @@ export function initProject({ target, type, name, plugins, repo, force = false, 
     if (!available.has(p)) throw new Error(`plugin "${p}" is not in marketplace.json`);
   }
 
+  const lang = detectLanguage(targetDir, { isNew });
+
   const created = [];
   const skipped = [];
 
@@ -81,7 +123,7 @@ export function initProject({ target, type, name, plugins, repo, force = false, 
     if (!projectName && fs.existsSync(targetPkg)) projectName = readJson(targetPkg).name;
     projectName ||= path.basename(targetDir);
     const tpl = fs.readFileSync(path.join(root, 'templates', cfg.template), 'utf8');
-    fs.writeFileSync(agentsPath, tpl.replaceAll('{{PROJECT_NAME}}', projectName));
+    fs.writeFileSync(agentsPath, renderTemplate(tpl, { projectName, lang }));
     created.push('AGENTS.md');
   }
 
@@ -107,7 +149,7 @@ export function initProject({ target, type, name, plugins, repo, force = false, 
   writeJson(settingsPath, settings);
   created.push('.claude/settings.json');
 
-  return { created, skipped, plugins: pluginIds, targetDir };
+  return { created, skipped, plugins: pluginIds, targetDir, lang };
 }
 
 // CLI
@@ -118,6 +160,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
     for (const c of r.created) console.log(`  + ${c}`);
     for (const s of r.skipped) console.log(`  = ${s}`);
     console.log(`  plugins: ${r.plugins.join(', ')}`);
+    console.log(`  language: ${r.lang === 'ts' ? 'TypeScript' : 'JavaScript (existing project)'}`);
     console.log(
       '\nNext: fill in the TODOs in AGENTS.md (or ask Claude: "use the agents-md-writer skill"), then commit.',
     );

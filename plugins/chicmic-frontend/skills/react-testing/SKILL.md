@@ -5,6 +5,8 @@ description: Use when writing, fixing or adding unit/component tests for React o
 
 # React testing
 
+**JavaScript projects:** the examples are TypeScript. In an existing `.js`/`.jsx` project, write the same code without types and document props and data shapes with JSDoc (`@typedef`, `@param`). Do not convert files to TypeScript as a side effect. New projects are always TypeScript.
+
 Default stack: **Vitest + React Testing Library + @testing-library/user-event + MSW**. If the project uses Jest, the same patterns apply (`jest.fn()` instead of `vi.fn()`). If the project has no test setup yet, use the `frontend-tooling-setup` skill first.
 
 ## What to test

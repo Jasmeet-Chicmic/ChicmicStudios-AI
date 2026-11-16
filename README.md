@@ -45,7 +45,15 @@ npm run init-project -- --target ../my-react-app --type react
 npm run init-project -- --target ../admin-panel --type nextjs --name "Admin Panel"
 ```
 
-Types: `react` (Vite / CRA) and `nextjs`. This writes three files into the project:
+Types: `react` (Vite / CRA) and `nextjs`.
+
+**Language:** new projects must be TypeScript. Create them from a TypeScript starter (`npm create vite@latest my-app -- --template react-ts` or `npx create-next-app@latest my-app --typescript`) and pass `--new`; the script refuses a new project without `tsconfig.json`. Existing JavaScript projects (with `package.json` but no `tsconfig.json`) are supported and get a JavaScript version of AGENTS.md.
+
+```bash
+npm run init-project -- --target ../new-shop --type react --new
+```
+
+This writes three files into the project:
 
 - `AGENTS.md` — the project rulebook, from the matching template (existing file is kept unless `--force`)
 - `CLAUDE.md` — contains `@AGENTS.md` so Claude Code reads the same file

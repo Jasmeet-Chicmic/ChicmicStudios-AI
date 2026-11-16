@@ -10,12 +10,13 @@ AGENTS.md is read by the agent at the start of every session, so every line cost
 ## Steps
 
 1. **Detect the stack** — read `package.json` (dependencies, scripts), lock file, `tsconfig.json`, framework config (`vite.config.*`, `next.config.*`), lint/format config.
-2. **Pick a template** from this marketplace repo's `templates/` folder if available (`AGENTS.react.md` for Vite/CRA, `AGENTS.nextjs.md` for Next.js). Otherwise use the section list below.
-3. **Map the folders** — list `src/` (or `app/` for Next.js) two levels deep and describe what lives where.
-4. **Learn the conventions from the code**, not from assumptions: open 3–5 representative files (a component, a service/API file, a store, a test) and note naming, state management, styling, API pattern, error handling.
-5. **Verify every command** you list by checking it exists in `package.json` scripts. Run `lint`, `test`, `build` if cheap, and note anything broken.
-6. Write the file, then create `CLAUDE.md` containing only `@AGENTS.md` if it doesn't exist.
-7. Finish with a short list of **questions for the tech lead** — things you could not determine from the code (for example "Is Redux being phased out in favour of Zustand?").
+2. **Detect the language**: `tsconfig.json` means TypeScript. No `tsconfig.json` in an existing project means JavaScript: drop TypeScript-only lines (`typecheck`, "no `any`", `types/`) and describe how props and data shapes are documented (JSDoc or nothing). A **new** project must be TypeScript; if it is not, stop and tell the user to recreate it from a TypeScript starter.
+3. **Pick a template** from this marketplace repo's `templates/` folder if available (`AGENTS.react.md` for Vite/CRA, `AGENTS.nextjs.md` for Next.js). Lines ending in `<!-- ts -->` or `<!-- js -->` apply to that language only: keep the matching ones and remove the markers. Otherwise use the section list below.
+4. **Map the folders** — list `src/` (or `app/` for Next.js) two levels deep and describe what lives where.
+5. **Learn the conventions from the code**, not from assumptions: open 3–5 representative files (a component, a service/API file, a store, a test) and note naming, state management, styling, API pattern, error handling.
+6. **Verify every command** you list by checking it exists in `package.json` scripts. Run `lint`, `test`, `build` if cheap, and note anything broken.
+7. Write the file, then create `CLAUDE.md` containing only `@AGENTS.md` if it doesn't exist.
+8. Finish with a short list of **questions for the tech lead** — things you could not determine from the code (for example "Is Redux being phased out in favour of Zustand?").
 
 ## Required sections
 

@@ -5,6 +5,8 @@ description: Use when deciding where state should live, adding global state, a s
 
 # State management
 
+**JavaScript projects:** the examples are TypeScript. In an existing `.js`/`.jsx` project, write the same code without types and document props and data shapes with JSDoc (`@typedef`, `@param`). Do not convert files to TypeScript as a side effect. New projects are always TypeScript.
+
 Use whatever store the project already uses (check `AGENTS.md` and `package.json`). Do not add a second state library.
 
 ## Decide where the state goes

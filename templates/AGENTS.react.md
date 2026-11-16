@@ -9,7 +9,8 @@ TODO: 2–3 lines — what the product is, who it is for, which platforms (web /
 
 ## Tech stack
 
-- React 18 + TypeScript, built with Vite
+- React 18 + TypeScript, built with Vite <!-- ts -->
+- React 18 + JavaScript (JSX), built with Vite <!-- js -->
 - Routing: React Router
 - State: TODO (Redux Toolkit / Zustand / Context)
 - Data fetching: TODO (React Query / RTK Query / axios hooks)
@@ -25,7 +26,7 @@ npm run dev          # start dev server
 npm run build        # production build
 npm run lint         # ESLint
 npm run format       # Prettier write
-npm run typecheck    # tsc --noEmit
+npm run typecheck    # tsc --noEmit <!-- ts -->
 npm test             # Vitest (run once)
 ```
 
@@ -34,19 +35,24 @@ npm test             # Vitest (run once)
 ```text
 src/
 ├── api/          # configured HTTP client + interceptors
-├── services/     # one file per backend resource, typed functions
+├── services/     # one file per backend resource, typed functions <!-- ts -->
+├── services/     # one file per backend resource, JSDoc-documented functions <!-- js -->
 ├── hooks/        # reusable hooks (data hooks wrap services)
 ├── components/   # shared UI components (one folder per component)
 ├── pages/        # route-level screens
 ├── store/        # global state
-├── types/        # shared TypeScript types
+├── types/        # shared TypeScript types <!-- ts -->
+├── types/        # shared JSDoc @typedef definitions <!-- js -->
 ├── utils/        # pure helpers
 └── test/         # test setup and MSW handlers
 ```
 
 ## Conventions
 
-- Components: function components, named exports, `<Name>Props` interface, folder per component with `index.ts`, test next to the file.
+- TypeScript only: all source files are `.ts`/`.tsx`. <!-- ts -->
+- JavaScript project: source files are `.js`/`.jsx`. Migrating to TypeScript is a separate, planned task, not part of feature work. <!-- js -->
+- Components: function components, named exports, `<Name>Props` interface, folder per component with `index.ts`, test next to the file. <!-- ts -->
+- Components: function components, named exports, props documented with a JSDoc `@typedef`, folder per component with `index.js`, test next to the file. <!-- js -->
 - Components never call the HTTP client directly: component → hook → service → `api/client.ts`.
 - Every async UI handles loading, error and empty states.
 - Env variables start with `VITE_` and are listed in `.env.example`.
@@ -60,11 +66,13 @@ src/
 
 ## Do not
 
-- Do not use `any`; define a type in `src/types/`.
+- Do not use `any`; define a type in `src/types/`. <!-- ts -->
+- Do not leave props or API responses undocumented; describe them with JSDoc `@typedef` in `src/types/`. <!-- js -->
 - Do not add new dependencies without saying why in the PR.
 - Do not edit `dist/`, generated API clients, or `package-lock.json` by hand.
 - Do not commit secrets or `.env` files.
 
 ## Definition of done
 
-`npm run lint`, `npm run typecheck` and `npm test` pass, and the change works in the browser.
+`npm run lint`, `npm run typecheck` and `npm test` pass, and the change works in the browser. <!-- ts -->
+`npm run lint` and `npm test` pass, and the change works in the browser. <!-- js -->

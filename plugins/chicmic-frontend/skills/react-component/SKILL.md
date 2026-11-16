@@ -5,6 +5,8 @@ description: Use when creating or refactoring a React component, page, screen, l
 
 # React component
 
+**JavaScript projects:** the examples are TypeScript. In an existing `.js`/`.jsx` project, write the same code without types and document props and data shapes with JSDoc (`@typedef`, `@param`). Do not convert files to TypeScript as a side effect. New projects are always TypeScript.
+
 The project's `AGENTS.md` wins over this skill wherever they disagree.
 
 ## Steps

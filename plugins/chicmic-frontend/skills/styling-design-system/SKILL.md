@@ -5,6 +5,8 @@ description: Use when styling components, building responsive layouts, adding de
 
 # Styling and design system
 
+**JavaScript projects:** the examples are TypeScript. In an existing `.js`/`.jsx` project, write the same code without types and document props and data shapes with JSDoc (`@typedef`, `@param`). Do not convert files to TypeScript as a side effect. New projects are always TypeScript.
+
 Use the styling approach the project already uses (`AGENTS.md`, `package.json`). Never mix a second approach into an existing project.
 
 ## Rules

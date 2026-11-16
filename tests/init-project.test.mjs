@@ -4,8 +4,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { initProject, marketplaceSource, TYPES } from '../scripts/init-project.mjs';
-import { tmpDir, write } from './helpers.mjs';
+import {
+  detectLanguage,
+  initProject,
+  marketplaceSource,
+  renderTemplate,
+  TYPES,
+} from '../scripts/init-project.mjs';
+import { jsProject, tmpDir, tsProject, write } from './helpers.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const REPO = 'acme/chicmic-ai';
@@ -14,7 +20,7 @@ const settings = (dir) => JSON.parse(read(dir, '.claude/settings.json'));
 
 describe('initProject', () => {
   it('creates AGENTS.md, CLAUDE.md and .claude/settings.json for a react project', () => {
-    const target = tmpDir();
+    const target = tsProject();
     write(target, 'package.json', { name: 'shop-web' });
     const r = initProject({ target, type: 'react', repo: REPO });
 
@@ -32,7 +38,7 @@ describe('initProject', () => {
   });
 
   it('uses the Next.js template for nextjs projects and respects --name', () => {
-    const target = tmpDir();
+    const target = tsProject();
     initProject({ target, type: 'nextjs', name: 'Admin Panel', repo: REPO });
     assert.match(read(target, 'AGENTS.md'), /^# Admin Panel/);
     assert.match(read(target, 'AGENTS.md'), /App Router/);
@@ -43,7 +49,7 @@ describe('initProject', () => {
   });
 
   it('falls back to the folder name when there is no package.json', () => {
-    const target = tmpDir('my-app-');
+    const target = tsProject('my-app-');
     initProject({ target, type: 'react', repo: REPO });
     assert.match(read(target, 'AGENTS.md'), new RegExp(`^# ${path.basename(target)}`));
   });
@@ -58,7 +64,7 @@ describe('initProject', () => {
   });
 
   it('does not overwrite an existing AGENTS.md without --force', () => {
-    const target = tmpDir();
+    const target = tsProject();
     write(target, 'AGENTS.md', '# Custom\n');
     const r = initProject({ target, type: 'react', repo: REPO });
     assert.equal(read(target, 'AGENTS.md'), '# Custom\n');
@@ -66,14 +72,14 @@ describe('initProject', () => {
   });
 
   it('overwrites AGENTS.md with force', () => {
-    const target = tmpDir();
+    const target = tsProject();
     write(target, 'AGENTS.md', '# Custom\n');
     initProject({ target, type: 'react', repo: REPO, name: 'New', force: true });
     assert.match(read(target, 'AGENTS.md'), /^# New/);
   });
 
   it('appends @AGENTS.md to an existing CLAUDE.md and keeps its content', () => {
-    const target = tmpDir();
+    const target = tsProject();
     write(target, 'CLAUDE.md', '# Existing notes\n');
     initProject({ target, type: 'react', repo: REPO });
     const claude = read(target, 'CLAUDE.md');
@@ -82,14 +88,14 @@ describe('initProject', () => {
   });
 
   it('is idempotent: running twice does not duplicate @AGENTS.md', () => {
-    const target = tmpDir();
+    const target = tsProject();
     initProject({ target, type: 'react', repo: REPO });
     initProject({ target, type: 'react', repo: REPO });
     assert.equal(read(target, 'CLAUDE.md').match(/@AGENTS.md/g).length, 1);
   });
 
   it('merges with existing .claude/settings.json instead of replacing it', () => {
-    const target = tmpDir();
+    const target = tsProject();
     write(target, '.claude/settings.json', {
       permissions: { allow: ['Bash(npm test)'] },
       enabledPlugins: { 'other@elsewhere': true },
@@ -102,7 +108,7 @@ describe('initProject', () => {
   });
 
   it('accepts a custom plugin list', () => {
-    const target = tmpDir();
+    const target = tsProject();
     initProject({ target, type: 'react', repo: REPO, plugins: 'core' });
     assert.deepEqual(Object.keys(settings(target).enabledPlugins), ['chicmic-core@chicmic-ai']);
   });
@@ -137,6 +143,83 @@ describe('initProject', () => {
   });
 });
 
+describe('language: TypeScript and JavaScript', () => {
+  const agents = (dir) => read(dir, 'AGENTS.md');
+
+  for (const type of Object.keys(TYPES)) {
+    it(`${type}: TypeScript project gets the TS rules and no markers`, () => {
+      const target = tsProject();
+      const r = initProject({ target, type, repo: REPO });
+      assert.equal(r.lang, 'ts');
+      assert.match(agents(target), /TypeScript/);
+      assert.match(agents(target), /npm run typecheck/);
+      assert.match(agents(target), /Do not use `any`/);
+      assert.doesNotMatch(agents(target), /JavaScript|JSDoc/);
+      assert.doesNotMatch(agents(target), /<!-- (ts|js) -->/);
+    });
+
+    it(`${type}: existing JavaScript project gets the JS rules`, () => {
+      const target = jsProject();
+      const r = initProject({ target, type, repo: REPO });
+      assert.equal(r.lang, 'js');
+      assert.match(agents(target), /JavaScript \(JSX\)/);
+      assert.match(agents(target), /JSDoc/);
+      assert.doesNotMatch(agents(target), /typecheck|`any`|TypeScript only/);
+      assert.doesNotMatch(agents(target), /<!-- (ts|js) -->/);
+    });
+  }
+
+  it('rejects a new project without tsconfig.json (--new)', () => {
+    assert.throws(
+      () => initProject({ target: jsProject(), type: 'react', repo: REPO, new: true }),
+      /New Chicmic projects must use TypeScript/,
+    );
+  });
+
+  it('treats a folder without package.json as a new project and requires TypeScript', () => {
+    assert.throws(
+      () => initProject({ target: tmpDir(), type: 'nextjs', repo: REPO }),
+      /must use TypeScript.*react-ts/,
+    );
+  });
+
+  it('accepts a new TypeScript project with --new', () => {
+    const r = initProject({ target: tsProject(), type: 'react', repo: REPO, new: true });
+    assert.equal(r.lang, 'ts');
+  });
+
+  it('detectLanguage prefers tsconfig.json over package.json', () => {
+    const dir = jsProject();
+    write(dir, 'tsconfig.json', {});
+    assert.equal(detectLanguage(dir), 'ts');
+  });
+
+  it('renderTemplate keeps unmarked lines and strips markers', () => {
+    const tpl = '# {{PROJECT_NAME}}\n- both\n- ts line <!-- ts -->\n- js line <!-- js -->\n';
+    assert.equal(renderTemplate(tpl, { projectName: 'X', lang: 'ts' }), '# X\n- both\n- ts line\n');
+    assert.equal(renderTemplate(tpl, { projectName: 'X', lang: 'js' }), '# X\n- both\n- js line\n');
+  });
+
+  it('CLI --new flag rejects a JavaScript folder', () => {
+    assert.throws(() =>
+      execFileSync(
+        'node',
+        [
+          'scripts/init-project.mjs',
+          '--target',
+          jsProject(),
+          '--type',
+          'react',
+          '--repo',
+          REPO,
+          '--new',
+        ],
+        { cwd: ROOT, stdio: 'pipe' },
+      ),
+    );
+  });
+});
+
 describe('marketplaceSource', () => {
   it('uses github for org/repo', () => {
     assert.deepEqual(marketplaceSource('acme/tools'), { source: 'github', repo: 'acme/tools' });
@@ -153,7 +236,7 @@ describe('marketplaceSource', () => {
 
 describe('CLI', () => {
   it('runs end to end and exits non-zero on bad input', () => {
-    const target = tmpDir();
+    const target = tsProject();
     const out = execFileSync(
       'node',
       ['scripts/init-project.mjs', '--target', target, '--type', 'nextjs', '--repo', REPO],

@@ -137,6 +137,13 @@ export function validateTemplate(file) {
       errors.push(`templates/${name}: missing section "${section}"`);
     }
   }
+  // Language markers: a line ending in <!-- ts --> or <!-- js --> is kept only for that language.
+  text.split('\n').forEach((line, i) => {
+    const m = line.match(/<!-- *([\w-]+) *-->\s*$/);
+    if (m && !['ts', 'js'].includes(m[1])) {
+      errors.push(`templates/${name}:${i + 1}: unknown language marker "<!-- ${m[1]} -->"`);
+    }
+  });
   if (!text.includes('{{PROJECT_NAME}}')) {
     errors.push(`templates/${name}: missing {{PROJECT_NAME}} placeholder in the title`);
   }

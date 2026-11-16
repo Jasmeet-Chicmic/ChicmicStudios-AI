@@ -9,7 +9,8 @@ TODO: 2–3 lines — what the product is, who it is for, SEO / SSR needs.
 
 ## Tech stack
 
-- Next.js (App Router) + React + TypeScript
+- Next.js (App Router) + React + TypeScript <!-- ts -->
+- Next.js (App Router) + React + JavaScript (JSX) <!-- js -->
 - State: TODO (Zustand / Redux Toolkit / Context)
 - Data fetching: Server Components + `fetch` for server data; TODO (React Query / SWR) on the client
 - Styling: TODO (Tailwind / SCSS modules)
@@ -24,24 +25,27 @@ npm run dev
 npm run build
 npm run lint
 npm run format
-npm run typecheck
+npm run typecheck <!-- ts -->
 npm test
 ```
 
 ## Project structure
 
 ```text
-app/              # routes: page.tsx, layout.tsx, loading.tsx, error.tsx, route.ts
+app/              # routes: page.tsx, layout.tsx, loading.tsx, error.tsx, route.ts <!-- ts -->
+app/              # routes: page.jsx, layout.jsx, loading.jsx, error.jsx, route.js <!-- js -->
 components/       # shared UI (one folder per component)
 lib/              # server utilities, API client, auth helpers
 services/         # typed functions per backend resource
 hooks/            # client hooks
-types/
+types/ <!-- ts -->
 public/
 ```
 
 ## Conventions
 
+- TypeScript only: all source files are `.ts`/`.tsx`. <!-- ts -->
+- JavaScript project: source files are `.js`/`.jsx`. Migrating to TypeScript is a separate, planned task, not part of feature work. <!-- js -->
 - Server Components by default; add `'use client'` only for state, effects, or browser APIs — and keep client components small and low in the tree.
 - Fetch data in Server Components or route handlers; set caching explicitly (`cache`, `revalidate`).
 - Every route segment that loads data has `loading.tsx` and `error.tsx`.
@@ -55,11 +59,13 @@ public/
 
 ## Do not
 
-- Do not use `any`.
+- Do not use `any`. <!-- ts -->
+- Do not leave props or API responses undocumented; describe them with JSDoc `@typedef`. <!-- js -->
 - Do not access `window`/`localStorage` in Server Components.
 - Do not edit `.next/` or generated files.
 - Do not commit secrets or `.env*.local`.
 
 ## Definition of done
 
-`npm run lint`, `npm run typecheck`, `npm test` and `npm run build` pass.
+`npm run lint`, `npm run typecheck`, `npm test` and `npm run build` pass. <!-- ts -->
+`npm run lint`, `npm test` and `npm run build` pass. <!-- js -->

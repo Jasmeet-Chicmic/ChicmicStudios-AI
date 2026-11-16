@@ -13,6 +13,20 @@ export function write(root, rel, content) {
   return file;
 }
 
+/** A temp folder that looks like a TypeScript project. */
+export function tsProject(prefix = 'chicmic-ai-') {
+  const dir = tmpDir(prefix);
+  write(dir, 'tsconfig.json', { compilerOptions: { strict: true } });
+  return dir;
+}
+
+/** A temp folder that looks like an existing JavaScript project (package.json, no tsconfig). */
+export function jsProject(name = 'legacy-web') {
+  const dir = tmpDir();
+  write(dir, 'package.json', { name });
+  return dir;
+}
+
 export function skillMd(
   name,
   description = `Use when testing ${name}.`,

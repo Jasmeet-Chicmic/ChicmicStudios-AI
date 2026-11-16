@@ -33,6 +33,6 @@
     ]
   },
   "config": {
-    "marketplaceRepo": "YOUR-ORG/chicmic-ai"
+    "marketplaceRepo": "chicmicstudios/chicmic-ai"
   }
 }

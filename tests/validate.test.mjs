@@ -203,6 +203,14 @@ describe('validateTemplate', () => {
     assert.ok(validateTemplate(file).errors.some((e) => /PROJECT_NAME/.test(e)));
   });
 
+  it('accepts ts/js language markers and rejects unknown ones', () => {
+    const root = tmpDir();
+    const ok = write(root, 'AGENTS.ok.md', VALID_TEMPLATE + '- a <!-- ts -->\n- b <!-- js -->\n');
+    assert.deepEqual(validateTemplate(ok).errors, []);
+    const bad = write(root, 'AGENTS.bad.md', VALID_TEMPLATE + '- a <!-- tsx -->\n');
+    assert.ok(validateTemplate(bad).errors.some((e) => /unknown language marker/.test(e)));
+  });
+
   it('fails when the template is too long', () => {
     const root = tmpDir();
     const file = write(root, 'AGENTS.x.md', VALID_TEMPLATE + 'line\n'.repeat(200));

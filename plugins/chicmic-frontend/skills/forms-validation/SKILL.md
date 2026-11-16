@@ -5,6 +5,8 @@ description: Use when building or fixing a form (login, signup, checkout, settin
 
 # Forms and validation
 
+**JavaScript projects:** the examples are TypeScript. In an existing `.js`/`.jsx` project, write the same code without types and document props and data shapes with JSDoc (`@typedef`, `@param`). Do not convert files to TypeScript as a side effect. New projects are always TypeScript.
+
 Default stack: **React Hook Form + Zod** (`@hookform/resolvers/zod`). Use the project's existing form library if it has one.
 
 ## Rules

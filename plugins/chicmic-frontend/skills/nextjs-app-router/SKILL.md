@@ -5,6 +5,8 @@ description: Use when adding or changing routes, layouts, pages, Server Componen
 
 # Next.js App Router
 
+**JavaScript projects:** the examples are TypeScript. In an existing `.js`/`.jsx` project, write the same code without types and document props and data shapes with JSDoc (`@typedef`, `@param`). Do not convert files to TypeScript as a side effect. New projects are always TypeScript.
+
 Check the Next.js version in `package.json` first — caching defaults changed between 14 and 15 (in 15, `fetch` is not cached by default and `params`/`searchParams` are Promises). If the project uses the `pages/` router, tell the user and follow `pages/` conventions instead.
 
 ## Route files

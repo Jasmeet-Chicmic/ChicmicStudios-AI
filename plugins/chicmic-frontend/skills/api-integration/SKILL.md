@@ -5,6 +5,8 @@ description: Use when integrating a REST API endpoint, adding a service function
 
 # API integration
 
+**JavaScript projects:** the examples are TypeScript. In an existing `.js`/`.jsx` project, write the same code without types and document props and data shapes with JSDoc (`@typedef`, `@param`). Do not convert files to TypeScript as a side effect. New projects are always TypeScript.
+
 Follow the layering below. If the project's `AGENTS.md` names a different HTTP client or data library, use that.
 
 ## Layers
